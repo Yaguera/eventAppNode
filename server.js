@@ -1,6 +1,7 @@
 const express = require('express')
 const ejs = require('ejs');
 const mongoose = require('mongoose')
+const Event = require('./models/Events')
 
 require('dotenv').config();
 
@@ -28,3 +29,24 @@ app.get('/',(req, res) => {
 });
 
 app.set('view engine', 'ejs');
+
+app.post('/submit-event', (req, res) => {
+    const event = new Event(req.body);
+    event.save()
+    .then((result)=>{
+        res.redirect('/');
+    })
+    .cath((err) => {
+        console.log(err);
+    });
+});
+
+app.get('/', (req,res) =>{
+    Event.find()
+    .then((result)=>{
+        res.render('index', {title: 'All event', events: result});
+    })
+    .catch((err)=> {
+        console.log(err);
+    });
+});
